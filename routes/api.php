@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -29,5 +30,7 @@ Route::prefix('v1')->group(function () {
             Route::patch('/change-photo', 'changePhoto');
             Route::post('/logout', 'logout');
         });
+        Route::apiResource('categories', CategoryController::class);
     });
+
 });
