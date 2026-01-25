@@ -2,4 +2,6 @@
 
 return [
     App\Providers\AppServiceProvider::class,
+    App\Providers\ScrambleProvider::class,
+    App\Providers\TelescopeServiceProvider::class,
 ];
