@@ -132,5 +132,6 @@ return [
         RestrictedDocsAccess::class,
     ],
 
+
     'extensions' => [],
 ];
