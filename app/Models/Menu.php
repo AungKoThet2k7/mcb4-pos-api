@@ -5,22 +5,25 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Category extends Model
+class Menu extends Model
 {
-    /** @use HasFactory<\Database\Factories\CategoryFactory> */
+    /** @use HasFactory<\Database\Factories\MenuFactory> */
     use HasFactory;
+
     protected $fillable = [
         'title',
         'slug',
-        'user_id',
+        'price',
+        'image',
+        'category_id',
+        'user_id'
     ];
-    public function user()
-    {
+
+    public function user(){
         return $this->belongsTo(User::class);
     }
 
-    public function menus()
-    {
-        return $this->hasMany(Menu::class);
+    public function category(){
+        return $this->belongsTo(Category::class);
     }
 }
