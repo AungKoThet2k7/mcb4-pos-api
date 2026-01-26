@@ -17,24 +17,23 @@ class MenuController extends Controller
      */
     public function index(Request $request)
     {
-        // Search params
+        // search params
         $searchTerm = $request->get('q');
-        $priceMin = $request->input("price_min");
-        $priceMax = $request->input("price_max");
-        $limit = $request->input('limit', 10);
+        $priceMin = $request->get('price_min');
+        $priceMax = $request->get('price_max');
 
-        // Sort params
-        $validSortColumn = ['id', 'title', 'price'];
-        $sortBy = in_array($request->input('sort_by'), $validSortColumn, true) ? $request->input('sort_by') : 'id';
+        // sort params
+        $validSortColumns = ['id', 'title', 'price'];
+        $sortBy = in_array($request->input('sort_by'), $validSortColumns, true) ? $request->input('sort_by') : 'id';
         $sortDirection = in_array($request->input('sort_direction'), ['asc', 'desc'], true) ? $request->input('sort_direction') : 'desc';
-        $limit = is_numeric($limit) && $limit > 0 && $limit <= 100 ? (int) $limit : 10;
 
-        // Initialize query with user scope
-        $query = Menu::query()->where('user_id', Auth::id())->with('category');
+        $menus = Menu::query()
+            ->where('user_id', Auth::id())
+            ->with('category');
 
-        // Apply search filter if search term exists
+        // search filter
         if ($searchTerm) {
-            $query->where(function ($q) use ($searchTerm) {
+            $menus->where(function ($q) use ($searchTerm) {
                 $q->where('title', 'like', "%{$searchTerm}%")
                     ->orWhere('slug', 'like', "%{$searchTerm}%")
                     ->orWhereHas('category', function ($cat) use ($searchTerm) {
@@ -44,35 +43,30 @@ class MenuController extends Controller
             });
         }
 
-        // Apply price range filter
+        // price filters
         if ($priceMin !== null && is_numeric($priceMin)) {
-            $query->where('price', '>=', (float) $priceMin);
+            $menus->where('price', '>=', (float)$priceMin);
         }
         if ($priceMax !== null && is_numeric($priceMax)) {
-            $query->where('price', '<=', (float) $priceMax);
+            $menus->where('price', '<=', (float)$priceMax);
         }
 
-        // Apply sorting
-        $query->orderBy($sortBy, $sortDirection);
-
-        // Execute paginated query
-        $menus = $query->paginate($limit);
-
-        // Preserve all query parameters in pagination links
-        $menus->appends([
-            'q' => $searchTerm,  // Pass the actual search term here
-            'sort_by' => $sortBy,
-            'sort_direction' => $sortDirection,
-            'limit' => $limit,
-            'price_min' => $priceMin,
-            'price_max' => $priceMax,
-        ]);
+        // paginate
+        $menus = $menus->orderBy($sortBy, $sortDirection)->paginate($request->input('limit', 5));
 
         return response()->json([
-            'message' => 'Menu retrieved successfully',
-            'data' => MenuResource::collection($menus)
+            'message' => 'Menu list retrieved successfully',
+            'data' => MenuResource::collection($menus),
+            'meta' => [
+                'current_page' => $menus->currentPage(),
+                'per_page' => $menus->perPage(),
+                'total' => $menus->total(),
+                'last_page' => $menus->lastPage(),
+            ]
         ]);
     }
+
+
 
 
     /**
