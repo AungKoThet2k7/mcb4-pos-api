@@ -44,7 +44,7 @@ return [
         /*
          * Define the theme of the documentation. Available options are `light`, `dark`, and `system`.
          */
-        'theme' => 'light',
+        'theme' => env('SCRAMBLE_THEME', 'light'),
 
         /*
          * Hide the `Try It` feature. Enabled by default.
