@@ -54,16 +54,10 @@ class MenuController extends Controller
         // paginate
         $menus = $menus->orderBy($sortBy, $sortDirection)->paginate($request->input('limit', 5));
 
-        return response()->json([
-            'message' => 'Menu list retrieved successfully',
-            'data' => MenuResource::collection($menus),
-            'meta' => [
-                'current_page' => $menus->currentPage(),
-                'per_page' => $menus->perPage(),
-                'total' => $menus->total(),
-                'last_page' => $menus->lastPage(),
-            ]
-        ]);
+        return MenuResource::collection($menus)
+            ->additional([
+                'message' => 'Menu retrieved successfully',
+            ]);
     }
 
 
