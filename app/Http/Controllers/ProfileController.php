@@ -8,6 +8,7 @@ use App\Http\Requests\ChangePhotoRequest;
 use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
 {
@@ -62,7 +63,9 @@ class ProfileController extends Controller
     {
         $user = Auth::user();
 
-        $user->update(['photo' => $request->photo]);
+        $photo = Storage::put('/', $request->file('photo'));
+
+        $user->update(['photo' => $photo]);
 
         return response()->json([
             'message' => 'Photo changed successfully',

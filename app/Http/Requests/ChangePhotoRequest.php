@@ -22,7 +22,7 @@ class ChangePhotoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'photo' => ['required', 'string'],
+            'photo' => ['required', 'image', 'mimes:jpeg,png,jpg', 'max:5012'],
         ];
     }
 }
