@@ -2,10 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use App\Models\Category;
+use Illuminate\Support\Facades\Storage;
 
 class DatabaseSeeder extends Seeder
 {
@@ -16,10 +15,27 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        $this->cleanStorage();
+
         $this->call([
             UserSeeder::class,
             CategorySeeder::class,
-            MenuSeeder::class
+            MenuSeeder::class,
         ]);
+    }
+
+    private function cleanStorage(): void
+    {
+        // Skip Cleaning Storage if environment is Not Local
+        if (! app()->environment('local')) {
+            return;
+        }
+
+        // Delete All Files in Root Storage
+        $photos = Storage::allFiles('/');
+
+        Storage::delete($photos);
+
+        $this->command->info('Storage cleaned.');
     }
 }
