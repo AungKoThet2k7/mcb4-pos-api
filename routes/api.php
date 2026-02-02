@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\MenuController;
+use App\Http\Controllers\PhotoController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -21,7 +22,7 @@ Route::prefix('v1')->group(function () {
         Route::post('/login', [AuthController::class, 'login']);
     });
 
-    Route::group(['middleware' => ['auth:sanctum']], function () {
+    Route::group(['middleware' => ['auth:sanctum'], 'prefix' => 'dashboard'], function () {
 
         // Profile
         Route::controller(ProfileController::class)->prefix('profile')->group(function () {
@@ -31,8 +32,12 @@ Route::prefix('v1')->group(function () {
             Route::patch('/change-photo', 'changePhoto');
             Route::post('/logout', 'logout');
         });
+
         Route::apiResource('categories', CategoryController::class);
+
         Route::apiResource('menus', MenuController::class);
+
+        Route::apiResource('photos', PhotoController::class)->only('store', 'destroy');
     });
 
 });
