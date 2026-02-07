@@ -21,13 +21,15 @@ class MenuResource extends JsonResource
             'price' => $this->price,
             'image' => $this->image,
             'category' => [
-                "id" => $this->category->id,
-                "title" => $this->category->title
+                'id' => $this->category->id,
+                'title' => $this->category->title,
             ],
             'user' => [
-                "id" => $this->user->id,
-                "name" => $this->user->name
-            ]
+                'id' => $this->user->id,
+                'name' => $this->user->name,
+            ],
+            'created_at' => $this->created_at?->format('j-m-Y g:i:s'),
+            'updated_at' => $this->updated_at?->format('j-m-Y g:i:s'),
         ];
     }
 }

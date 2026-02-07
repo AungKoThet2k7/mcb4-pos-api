@@ -18,27 +18,24 @@ class CategoryController extends Controller
     public function index(Request $request)
     {
 
-       
-
-        $query=Category::query();
-        $keyword=$request->get("q");
+        $query = Category::query();
+        $keyword = $request->get('q');
         $query->where(function ($q) use ($keyword) {
             $q->where('title', 'like', "%{$keyword}%")
-            ->orWhere('slug', 'like', "%{$keyword}%");
+                ->orWhere('slug', 'like', "%{$keyword}%");
 
         });
 
+        $sortBy = $request->get('sort_by') ?? 'id';
+        $sortDirection = $request->get('sort_direction') ?? 'desc';
 
-        $sortBy=$request->get("sort_by") ?? "id";
-        $sortDirection=$request->get("sort_direction") ?? "desc";
+        $query->orderBy($sortBy, $sortDirection);
 
-        $query->orderBy($sortBy,$sortDirection);
-        
-    
-        $categories=$query->paginate(10);
+        $categories = $query->paginate(10)->withQueryString();
 
-        
-        return CategoryResource::collection($categories);
+        return CategoryResource::collection($categories)->additional([
+            'message' => 'Categories retrieved successfully',
+        ]);
 
     }
 
@@ -50,14 +47,14 @@ class CategoryController extends Controller
         $validated = $request->validated();
 
         $category = Category::create([
-            'title'   => $validated['title'],
-            'slug'    => $validated['slug'] ?? null,
+            'title' => $validated['title'],
+            'slug' => $validated['slug'] ?? null,
             'user_id' => Auth::id(),
         ]);
 
         return response()->json([
             'message' => 'Category created successfully',
-            'data'    => new CategoryResource($category),
+            'data' => new CategoryResource($category),
         ], 201);
 
     }
@@ -68,8 +65,9 @@ class CategoryController extends Controller
     public function show(Category $category)
     {
         return response()->json([
-            'data'=>new CategoryResource($category)
-        ],200);
+            'message' => 'Category retrieved successfully',
+            'data' => new CategoryResource($category),
+        ], 200);
     }
 
     /**
@@ -79,12 +77,11 @@ class CategoryController extends Controller
     {
         $validated = $request->validated();
 
-    
         $category->update($validated);
 
         return response()->json([
-            'data'=>new CategoryResource($category),
-            'message' => 'Category updated successfully.',
+            'message' => 'Category updated successfully',
+            'data' => new CategoryResource($category),
         ]);
 
     }
@@ -94,14 +91,13 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
-        
+
         // Gate::authorize('delete',$category);
 
         $category->delete();
 
         return response()->json([
-            'data'=>new CategoryResource($category),
-            'message' => 'Category deleted successfully.',
+            'message' => 'Category deleted successfully',
         ]);
 
     }
