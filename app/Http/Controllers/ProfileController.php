@@ -80,6 +80,6 @@ class ProfileController extends Controller
     {
         Auth::user()->currentAccessToken()->delete();
 
-        return response()->json(['data' => ['message' => 'Logged Out Successfully']], 200);
+        return response()->json(['message' => 'Logged Out Successfully'], 200);
     }
 }
