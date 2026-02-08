@@ -28,8 +28,8 @@ class MenuResource extends JsonResource
                 'id' => $this->user->id,
                 'name' => $this->user->name,
             ],
-            'created_at' => $this->created_at?->format('j-m-Y g:i:s'),
-            'updated_at' => $this->updated_at?->format('j-m-Y g:i:s'),
+            'created_at' => $this->created_at?->format('j-m-Y H:i:s'),
+            'updated_at' => $this->updated_at?->format('j-m-Y H:i:s'),
         ];
     }
 }

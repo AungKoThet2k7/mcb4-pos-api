@@ -19,8 +19,8 @@ class PhotoResource extends JsonResource
             'id' => $this->id,
             'url' => $this->url ? Storage::url($this->url) : config('base.photo_placeholder'),
             'photo_name' => $this->url,
-            'created_at' => $this->created_at?->format('j-m-Y g:i:s'),
-            'updated_at' => $this->updated_at?->format('j-m-Y g:i:s'),
+            'created_at' => $this->created_at?->format('j-m-Y H:i:s'),
+            'updated_at' => $this->updated_at?->format('j-m-Y H:i:s'),
         ];
     }
 }

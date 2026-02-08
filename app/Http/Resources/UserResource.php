@@ -20,8 +20,8 @@ class UserResource extends JsonResource
             'name' => $this->name,
             'email' => $this->email,
             'photo' => $this->photo ? Storage::url($this->photo) : config('base.default_profile_photo'),
-            'created_at' => $this->created_at?->format('j-m-Y g:i:s'),
-            'updated_at' => $this->updated_at?->format('j-m-Y g:i:s'),
+            'created_at' => $this->created_at?->format('j-m-Y H:i:s'),
+            'updated_at' => $this->updated_at?->format('j-m-Y H:i:s'),
         ];
     }
 }
