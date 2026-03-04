@@ -29,6 +29,9 @@ class VoucherController extends Controller
 
         $query->orderBy($sortBy, $sortDirection);
 
+        // Eager Loading
+        $query->with(['user', 'voucherItems']);
+
         // Pagination
         $limit = $request->input('limit', 5);
         $vouchers = $query->orderBy($sortBy, $sortDirection)->paginate($limit)->appends([
@@ -57,7 +60,10 @@ class VoucherController extends Controller
      */
     public function show(Voucher $voucher)
     {
-        //
+        return response()->json([
+            'message' => 'Voucher retrieved successfully',
+            'data' => new VoucherResource($voucher),
+        ]);
     }
 
     /**
