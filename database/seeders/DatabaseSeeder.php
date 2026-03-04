@@ -15,7 +15,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->cleanStorage();
+        // $this->cleanStorage();
 
         $this->call([
             UserSeeder::class,
