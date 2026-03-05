@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -11,6 +12,7 @@ class Voucher extends Model
     use HasFactory;
 
     protected $fillable = [
+        'invoice_number',
         'customer_id',
         'date',
         'total',
@@ -28,13 +30,6 @@ class Voucher extends Model
         'voucherItems',
     ];
 
-    // TODO: Uncomment this relation after customer module is implemented
-
-    // public function customer()
-    // {
-    //     return $this->belongsTo(Customer::class);
-    // }
-
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -50,15 +45,22 @@ class Voucher extends Model
     {
         $q->when($keyword, function ($q) use ($keyword) {
             $q->where(function ($q) use ($keyword) {
-                $q->where('id', 'like', '%'.$keyword.'%');
-
-                // TODO: Uncomment this search query after customer module is implemented
-
-                // ->orWhereHas('customer', function ($q) use ($keyword) {
-                //     $q->where('name', 'like', '%'.$keyword.'%')
-                //         ->orWhere('phone', 'like', '%'.$keyword.'%');
-                // });
+                $q->where('invoice_number', 'like', '%'.$keyword.'%');
             });
         });
+    }
+
+    // Date Filter Scope
+    public function scopeDateFilter($q, $start_date, $end_date)
+    {
+        $q->when($start_date && $end_date, function ($q) use ($start_date, $end_date) {
+            $q->whereBetween('date', [Carbon::parse($start_date)->startOfDay(), Carbon::parse($end_date)->endOfDay()]);
+        })
+            ->when($start_date && ! $end_date, function ($q) use ($start_date) {
+                $q->whereDate('date', '>=', Carbon::parse($start_date)->startOfDay());
+            })
+            ->when(! $start_date && $end_date, function ($q) use ($end_date) {
+                $q->whereDate('date', '<=', Carbon::parse($end_date)->endOfDay());
+            });
     }
 }

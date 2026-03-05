@@ -16,7 +16,8 @@ class VoucherResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'customer_id' => $this->customer_id,
+            'invoice_number' => $this->invoice_number,
+            'customer_id' => $this->customer_id ?? null,
             'date' => $this->date,
             'total' => $this->total,
             'tax' => $this->tax,

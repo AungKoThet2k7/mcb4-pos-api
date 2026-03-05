@@ -33,12 +33,19 @@ class VoucherController extends Controller
 
         $query->orderBy($sortBy, $sortDirection);
 
+        // Filter by date
+        $startDate = $request->start_date;
+        $endDate = $request->end_date;
+        $query->dateFilter($startDate, $endDate);
+
         // Pagination
         $limit = $request->input('limit', 5);
         $vouchers = $query->orderBy($sortBy, $sortDirection)->paginate($limit)->appends([
             'q' => $keyword,
             'sort_by' => $sortBy,
             'sort_direction' => $sortDirection,
+            'start_date' => $startDate,
+            'end_date' => $endDate,
             'limit' => $limit,
         ]);
 
@@ -87,7 +94,8 @@ class VoucherController extends Controller
 
             // Create a new voucher
             $voucher = Voucher::create([
-                'customer_id' => $validated['customer_id'],
+                'invoice_number' => $validated['invoice_number'],
+                'customer_id' => $validated['customer_id'] ?? null,
                 'date' => $validated['date'],
                 'total' => $total,
                 'tax' => $tax,

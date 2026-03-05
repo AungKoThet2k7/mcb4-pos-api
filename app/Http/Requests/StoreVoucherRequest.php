@@ -22,7 +22,13 @@ class StoreVoucherRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [    // TODO: apply 'exists:customers,id' rule after customer module is completed
+        return [
+            'invoice_number' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('vouchers', 'invoice_number'),
+            ],
             'customer_id' => ['nullable'],
             'date' => ['required', 'date'],
             'cash' => ['required', 'integer', 'min:0'],

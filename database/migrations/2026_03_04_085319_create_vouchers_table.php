@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('vouchers', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('customer_id');
+            $table->string('invoice_number')->unique();
+            $table->foreignId('customer_id')->nullable();
             $table->date('date');
             $table->integer('total');
             $table->integer('tax');
