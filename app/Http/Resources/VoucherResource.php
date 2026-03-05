@@ -26,7 +26,7 @@ class VoucherResource extends JsonResource
             'change' => $this->change,
             'voucher_items_count' => $this->voucher_items_count,
             'type' => $this->type,
-            'user_id' => $this->user_id,
+            'user' => new UserResource($this->user),
             'voucher_items' => VoucherItemResource::collection($this->voucherItems),
             'created_at' => $this->created_at?->format('j-m-Y H:i:s'),
             'updated_at' => $this->updated_at?->format('j-m-Y H:i:s'),

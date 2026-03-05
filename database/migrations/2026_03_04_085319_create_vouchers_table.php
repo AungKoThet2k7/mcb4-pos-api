@@ -23,7 +23,7 @@ return new class extends Migration
             $table->integer('change');
             $table->integer('voucher_items_count')->default(0);
             $table->foreignId('user_id');
-            $table->enum('type', config("base.sale_type"));
+            $table->enum('type', config("base.sale_types"));
             $table->timestamps();
         });
     }

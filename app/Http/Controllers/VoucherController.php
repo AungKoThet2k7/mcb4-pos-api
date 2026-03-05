@@ -38,6 +38,12 @@ class VoucherController extends Controller
         $endDate = $request->end_date;
         $query->dateFilter($startDate, $endDate);
 
+        // Filter by order type
+        $type = $request->order_type;
+        $query->when($type && in_array($type, config('base.sale_types')), function ($q) use ($type) {
+            $q->where('type', $type);
+        });
+
         // Pagination
         $limit = $request->input('limit', 5);
         $vouchers = $query->orderBy($sortBy, $sortDirection)->paginate($limit)->appends([

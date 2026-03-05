@@ -33,7 +33,7 @@ class StoreVoucherRequest extends FormRequest
             'date' => ['required', 'date'],
             'cash' => ['required', 'integer', 'min:0'],
             'change' => ['required', 'integer', 'min:0'],
-            'type' => ['required', Rule::in(config('base.sale_type'))],
+            'type' => ['required', Rule::in(config('base.sale_types'))],
             'voucher_items' => ['required', 'array', 'min:1'],
             'voucher_items.*.menu_id' => ['required', 'exists:menus,id'],
             'voucher_items.*.quantity' => ['required', 'integer', 'min:1'],
