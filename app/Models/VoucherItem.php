@@ -24,6 +24,8 @@ class VoucherItem extends Model
         'menu' => 'json',
     ];
 
+    protected $with = ['menu', 'user'];
+
     public function voucher(){
         return $this->belongsTo(Voucher::class);
     }

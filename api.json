@@ -1486,18 +1486,72 @@
                 "tags": [
                     "Voucher"
                 ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreVoucherRequest"
+                            }
+                        }
+                    }
+                },
                 "responses": {
+                    "500": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "enum": [
+                                                "Failed to create voucher"
+                                            ]
+                                        },
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "message",
+                                        "error"
+                                    ]
+                                }
+                            }
+                        }
+                    },
                     "200": {
-                        "description": ""
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "enum": [
+                                                "Voucher created successfully"
+                                            ]
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/VoucherResource"
+                                        }
+                                    },
+                                    "required": [
+                                        "message",
+                                        "data"
+                                    ]
+                                }
+                            }
+                        }
                     },
                     "401": {
                         "$ref": "#/components/responses/AuthenticationException"
                     },
                     "422": {
                         "$ref": "#/components/responses/ValidationException"
-                    },
-                    "403": {
-                        "$ref": "#/components/responses/AuthorizationException"
                     }
                 }
             }
@@ -1522,10 +1576,55 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": ""
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "enum": [
+                                                "Voucher retrieved successfully"
+                                            ]
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/VoucherResource"
+                                        }
+                                    },
+                                    "required": [
+                                        "message",
+                                        "data"
+                                    ]
+                                }
+                            }
+                        }
                     },
                     "404": {
                         "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
+        "/v1/dashboard/vouchers/export": {
+            "get": {
+                "operationId": "voucher.export",
+                "tags": [
+                    "Voucher"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
                     },
                     "401": {
                         "$ref": "#/components/responses/AuthenticationException"
@@ -1837,6 +1936,69 @@
                 ],
                 "title": "StorePhotoRequest"
             },
+            "StoreVoucherRequest": {
+                "type": "object",
+                "properties": {
+                    "invoice_number": {
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "customer_id": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "date": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "cash": {
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "change": {
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "take_away",
+                            "dine_in"
+                        ]
+                    },
+                    "voucher_items": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "menu_id": {
+                                    "type": "integer"
+                                },
+                                "quantity": {
+                                    "type": "integer",
+                                    "minimum": 1
+                                }
+                            },
+                            "required": [
+                                "menu_id",
+                                "quantity"
+                            ]
+                        },
+                        "minItems": 1
+                    }
+                },
+                "required": [
+                    "invoice_number",
+                    "date",
+                    "cash",
+                    "change",
+                    "type",
+                    "voucher_items"
+                ],
+                "title": "StoreVoucherRequest"
+            },
             "UpdateCategoryRequest": {
                 "type": "object",
                 "properties": {
@@ -1919,14 +2081,69 @@
                 ],
                 "title": "UserResource"
             },
+            "VoucherItemResource": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "voucher_id": {
+                        "type": "integer"
+                    },
+                    "menu_id": {
+                        "type": "integer"
+                    },
+                    "menu": {
+                        "type": "array",
+                        "items": {}
+                    },
+                    "price": {
+                        "type": "integer"
+                    },
+                    "quantity": {
+                        "type": "integer"
+                    },
+                    "cost": {
+                        "type": "integer"
+                    },
+                    "user_id": {
+                        "type": "integer"
+                    },
+                    "created_at": {
+                        "type": "string"
+                    },
+                    "updated_at": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "id",
+                    "voucher_id",
+                    "menu_id",
+                    "menu",
+                    "price",
+                    "quantity",
+                    "cost",
+                    "user_id",
+                    "created_at",
+                    "updated_at"
+                ],
+                "title": "VoucherItemResource"
+            },
             "VoucherResource": {
                 "type": "object",
                 "properties": {
                     "id": {
                         "type": "integer"
                     },
+                    "invoice_number": {
+                        "type": "string"
+                    },
                     "customer_id": {
-                        "type": "integer"
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
                     },
                     "date": {
                         "type": "string"
@@ -1952,8 +2169,14 @@
                     "type": {
                         "type": "string"
                     },
-                    "user_id": {
-                        "type": "integer"
+                    "user": {
+                        "$ref": "#/components/schemas/UserResource"
+                    },
+                    "voucher_items": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/VoucherItemResource"
+                        }
                     },
                     "created_at": {
                         "type": "string"
@@ -1964,6 +2187,7 @@
                 },
                 "required": [
                     "id",
+                    "invoice_number",
                     "customer_id",
                     "date",
                     "total",
@@ -1973,7 +2197,8 @@
                     "change",
                     "voucher_items_count",
                     "type",
-                    "user_id",
+                    "user",
+                    "voucher_items",
                     "created_at",
                     "updated_at"
                 ],
@@ -2032,25 +2257,6 @@
             },
             "ModelNotFoundException": {
                 "description": "Not found",
-                "content": {
-                    "application/json": {
-                        "schema": {
-                            "type": "object",
-                            "properties": {
-                                "message": {
-                                    "type": "string",
-                                    "description": "Error overview."
-                                }
-                            },
-                            "required": [
-                                "message"
-                            ]
-                        }
-                    }
-                }
-            },
-            "AuthorizationException": {
-                "description": "Authorization error",
                 "content": {
                     "application/json": {
                         "schema": {

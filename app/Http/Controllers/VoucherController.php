@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\VouchersExport;
 use App\Http\Requests\StoreVoucherRequest;
 use App\Http\Requests\UpdateVoucherRequest;
 use App\Http\Resources\VoucherResource;
@@ -11,6 +12,7 @@ use App\Models\VoucherItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class VoucherController extends Controller
 {
@@ -164,5 +166,10 @@ class VoucherController extends Controller
     public function destroy(Voucher $voucher)
     {
         //
+    }
+
+    public function export(Request $request)
+    {
+        return Excel::download(new VouchersExport($request), 'vouchers.xlsx');
     }
 }
