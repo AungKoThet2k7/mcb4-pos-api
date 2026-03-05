@@ -40,6 +40,7 @@ Route::prefix('v1')->group(function () {
 
         Route::apiResource('photos', PhotoController::class)->only('store', 'destroy');
 
+        Route::get('vouchers/export', [VoucherController::class, 'export']);
         Route::apiResource('vouchers', VoucherController::class)->except('update', 'destroy');
     });
 
