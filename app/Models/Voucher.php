@@ -23,6 +23,13 @@ class Voucher extends Model
         'type',
     ];
 
+    protected $with = [
+        'user',
+        'voucherItems',
+    ];
+
+    // TODO: Uncomment this relation after customer module is implemented
+
     // public function customer()
     // {
     //     return $this->belongsTo(Customer::class);
@@ -44,10 +51,13 @@ class Voucher extends Model
         $q->when($keyword, function ($q) use ($keyword) {
             $q->where(function ($q) use ($keyword) {
                 $q->where('id', 'like', '%'.$keyword.'%');
-                    // ->orWhereHas('customer', function ($q) use ($keyword) {
-                    //     $q->where('name', 'like', '%'.$keyword.'%')
-                    //         ->orWhere('phone', 'like', '%'.$keyword.'%');
-                    // });
+
+                // TODO: Uncomment this search query after customer module is implemented
+
+                // ->orWhereHas('customer', function ($q) use ($keyword) {
+                //     $q->where('name', 'like', '%'.$keyword.'%')
+                //         ->orWhere('phone', 'like', '%'.$keyword.'%');
+                // });
             });
         });
     }

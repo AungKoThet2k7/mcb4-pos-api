@@ -5,8 +5,12 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreVoucherRequest;
 use App\Http\Requests\UpdateVoucherRequest;
 use App\Http\Resources\VoucherResource;
+use App\Models\Menu;
 use App\Models\Voucher;
+use App\Models\VoucherItem;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class VoucherController extends Controller
 {
@@ -29,9 +33,6 @@ class VoucherController extends Controller
 
         $query->orderBy($sortBy, $sortDirection);
 
-        // Eager Loading
-        $query->with(['user', 'voucherItems']);
-
         // Pagination
         $limit = $request->input('limit', 5);
         $vouchers = $query->orderBy($sortBy, $sortDirection)->paginate($limit)->appends([
@@ -52,7 +53,76 @@ class VoucherController extends Controller
      */
     public function store(StoreVoucherRequest $request)
     {
-        //
+        $validated = $request->validated();
+
+        try {
+
+            DB::beginTransaction();
+
+            $menuIds = collect($validated['voucher_items'])->pluck('menu_id');
+            $menus = Menu::whereIn('id', $menuIds)->get();
+
+            // voucher items array
+            $voucherItems = [];
+
+            foreach ($validated['voucher_items'] as $item) {
+                $menu = $menus->firstWhere('id', $item['menu_id']);
+                $cost = $menu->price * $item['quantity'];
+
+                $voucherItems[] = [
+                    'menu_id' => $item['menu_id'],
+                    'menu' => $menu,
+                    'quantity' => $item['quantity'],
+                    'price' => $menu->price,
+                    'cost' => $cost,
+                    'user_id' => Auth::id(),
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            }
+
+            $total = collect($voucherItems)->sum('cost');
+            $tax = $total * 0.07;
+            $net_total = $total + $tax;
+
+            // Create a new voucher
+            $voucher = Voucher::create([
+                'customer_id' => $validated['customer_id'],
+                'date' => $validated['date'],
+                'total' => $total,
+                'tax' => $tax,
+                'net_total' => $net_total,
+                'cash' => $validated['cash'],
+                'change' => $validated['change'],
+                'voucher_items_count' => count($voucherItems),
+                'type' => $validated['type'],
+                'user_id' => Auth::id(),
+            ]);
+
+            // Store voucher items
+            $voucherItems = collect($voucherItems)->map(function ($item) use ($voucher) {
+                $item['voucher_id'] = $voucher->id;
+
+                return $item;
+            })->toArray();
+
+            VoucherItem::insert($voucherItems);
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'Voucher created successfully',
+                'data' => new VoucherResource($voucher),
+            ]);
+
+        } catch (\Throwable $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'message' => 'Failed to create voucher',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     /**
