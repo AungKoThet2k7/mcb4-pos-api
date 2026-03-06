@@ -54,6 +54,7 @@ class VoucherController extends Controller
             'sort_direction' => $sortDirection,
             'start_date' => $startDate,
             'end_date' => $endDate,
+            'order_type' => $type,
             'limit' => $limit,
         ]);
 
