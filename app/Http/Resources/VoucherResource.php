@@ -28,8 +28,8 @@ class VoucherResource extends JsonResource
             'type' => $this->type,
             'user' => new UserResource($this->user),
             'voucher_items' => VoucherItemResource::collection($this->voucherItems),
-            'created_at' => $this->created_at?->format('j-m-Y H:i:s'),
-            'updated_at' => $this->updated_at?->format('j-m-Y H:i:s'),
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
         ];
     }
 }
