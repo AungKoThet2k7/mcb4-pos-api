@@ -63,9 +63,7 @@ class ProfileController extends Controller
     {
         $user = Auth::user();
 
-        $photo = Storage::put('/', $request->file('photo'));
-
-        $user->update(['photo' => $photo]);
+        $user->update(['photo' => $request->photo]);
 
         return response()->json([
             'message' => 'Photo changed successfully',
