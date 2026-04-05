@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BannerController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\PhotoController;
@@ -42,6 +43,8 @@ Route::prefix('v1')->group(function () {
 
         Route::get('vouchers/export', [VoucherController::class, 'export']);
         Route::apiResource('vouchers', VoucherController::class)->except('update', 'destroy');
+
+        Route::apiResource('banners', BannerController::class);
     });
 
 });

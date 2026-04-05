@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Storage;
 
-class UserResource extends JsonResource
+class BannerResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -17,11 +17,12 @@ class UserResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'name' => $this->name,
-            'email' => $this->email,
-            'photo' => $this->photo ? Storage::url($this->photo) : config('base.default_profile_photo'),
+            'image' => $this->image ? Storage::url($this->image) : config('base.photo_placeholder'),
+            'description' => $this->description,
+            'is_available' => $this->is_available,
+            'user' => new UserResource($this->user),
             'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'updated_at' => $this->updated_at
         ];
     }
 }
